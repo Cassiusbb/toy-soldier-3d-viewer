@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Low-Poly Toy Soldier Viewer</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="top-bar">
+      <h1>Low-Poly Toy Soldier Viewer</h1>
+      <p class="subtitle">Interactive static Three.js demo</p>
+    </header>
+
+    <main class="layout">
+      <section class="controls" aria-label="Viewer controls">
+        <h2>Controls</h2>
+
+        <label for="animationSelect">Animation</label>
+        <select id="animationSelect" aria-label="Choose animation">
+          <option value="march">March</option>
+          <option value="wave">Wave</option>
+          <option value="idle">Idle</option>
+        </select>
+
+        <button id="playPauseBtn" type="button" aria-pressed="true">Pause Animation</button>
+
+        <label for="colorSelect">Soldier Color</label>
+        <select id="colorSelect" aria-label="Choose soldier color">
+          <option value="olive" selected>Olive</option>
+          <option value="blue">Navy</option>
+          <option value="red">Ceremonial Red</option>
+          <option value="tan">Desert Tan</option>
+        </select>
+
+        <button id="resetCameraBtn" type="button">Reset Camera</button>
+
+        <label class="checkbox-row" for="autoRotateToggle">
+          <input id="autoRotateToggle" type="checkbox" />
+          Auto-rotate camera
+        </label>
+
+        <p class="hint">
+          Mouse/touch: rotate · Right mouse/two-finger drag: pan · Scroll/pinch: zoom
+        </p>
+      </section>
+
+      <section class="viewer" aria-label="3D viewer">
+        <div id="webglFallback" class="fallback" role="status" aria-live="polite" hidden>
+          WebGL is unavailable in this browser or device. Please use a WebGL-enabled browser.
+        </div>
+        <canvas id="sceneCanvas" aria-label="Animated 3D toy soldier"></canvas>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
