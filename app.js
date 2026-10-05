@@ -103,11 +103,21 @@ resize();
 animate();
 
 function createRenderer() {
-  try {
-    return new THREE.WebGLRenderer({ canvas, antialias: true });
-  } catch {
-    return null;
+  const rendererOptions = [
+    { antialias: true, powerPreference: 'high-performance' },
+    { antialias: false, powerPreference: 'high-performance' },
+    { antialias: false, powerPreference: 'default' }
+  ];
+
+  for (const options of rendererOptions) {
+    try {
+      return new THREE.WebGLRenderer({ canvas, ...options });
+    } catch {
+      // Try the next renderer configuration.
+    }
   }
+
+  return null;
 }
 
 function addLights(parent) {
