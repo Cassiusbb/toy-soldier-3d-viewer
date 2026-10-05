@@ -45,11 +45,11 @@ No server-side code or bundler is required.
 
 ## CDN dependencies
 
-Loaded directly in `app.js`:
+Loaded via import map in `index.html`:
 
 - `three.module.js` from jsDelivr (`three@0.170.0`)
-- `OrbitControls.js` from jsDelivr (`three@0.170.0` examples)
+- `OrbitControls.js` from `three` examples (`three@0.170.0`) through the `three/addons/` import-map alias
 
 ## Graceful fallback
 
-If WebGL is unavailable, the viewer hides the canvas and shows a clear fallback message in the UI.
+If WebGL or viewer module loading fails, the viewer hides the canvas and shows a clear diagnostic message in the UI.
