@@ -1,106 +1,115 @@
-import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js';
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/controls/OrbitControls.js';
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
 const canvas = document.getElementById('sceneCanvas');
 const fallback = document.getElementById('webglFallback');
 
-const renderer = createRenderer();
-if (!renderer) {
+function showRuntimeError(message, error) {
   canvas.hidden = true;
   fallback.hidden = false;
-  throw new Error('WebGL is not available.');
+  fallback.textContent = `${message}\n${error?.message || 'Unknown error.'}`;
 }
 
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x9fc9e8);
-scene.fog = new THREE.Fog(0x9fc9e8, 10, 30);
-
-const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
-const defaultCameraPosition = new THREE.Vector3(4.4, 3.2, 7.4);
-camera.position.copy(defaultCameraPosition);
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-controls.dampingFactor = 0.06;
-controls.target.set(0, 1.4, 0);
-controls.minDistance = 3;
-controls.maxDistance = 16;
-
-addLights(scene);
-addGround(scene);
-const model = createToySoldier();
-scene.add(model.root);
-
-const animationState = {
-  mode: 'march',
-  isPlaying: true,
-  elapsed: 0
-};
-
-const playPauseBtn = document.getElementById('playPauseBtn');
-const animationSelect = document.getElementById('animationSelect');
-const resetCameraBtn = document.getElementById('resetCameraBtn');
-const autoRotateToggle = document.getElementById('autoRotateToggle');
-const colorSelect = document.getElementById('colorSelect');
-
-playPauseBtn.addEventListener('click', () => {
-  animationState.isPlaying = !animationState.isPlaying;
-  playPauseBtn.textContent = animationState.isPlaying ? 'Pause Animation' : 'Play Animation';
-  playPauseBtn.setAttribute('aria-pressed', String(!animationState.isPlaying));
-});
-
-animationSelect.addEventListener('change', (event) => {
-  animationState.mode = event.target.value;
-  animationState.elapsed = 0;
-});
-
-resetCameraBtn.addEventListener('click', () => {
-  camera.position.copy(defaultCameraPosition);
-  controls.target.set(0, 1.4, 0);
-  controls.update();
-});
-
-autoRotateToggle.addEventListener('change', (event) => {
-  controls.autoRotate = Boolean(event.target.checked);
-  controls.autoRotateSpeed = 0.9;
-});
-
-colorSelect.addEventListener('change', (event) => {
-  applyColorTheme(model.materialTargets, event.target.value);
-});
-
-applyColorTheme(model.materialTargets, colorSelect.value);
-
-const clock = new THREE.Clock();
-function animate() {
-  requestAnimationFrame(animate);
-
-  const delta = Math.min(clock.getDelta(), 1 / 20);
-  if (animationState.isPlaying) {
-    animationState.elapsed += delta;
-    runAnimation(model.rig, animationState);
+try {
+  const renderer = createRenderer();
+  if (!renderer) {
+    throw new Error('WebGL initialization failed in this browser.');
   }
 
-  controls.update();
-  renderer.render(scene, camera);
-}
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-function resize() {
-  const container = canvas.parentElement;
-  const width = container.clientWidth;
-  const height = container.clientHeight;
-  camera.aspect = width / height;
-  camera.updateProjectionMatrix();
-  renderer.setSize(width, height, false);
-}
+  const scene = new THREE.Scene();
+  scene.background = new THREE.Color(0x9fc9e8);
+  scene.fog = new THREE.Fog(0x9fc9e8, 10, 30);
 
-window.addEventListener('resize', resize);
-resize();
-animate();
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+  const defaultCameraPosition = new THREE.Vector3(4.4, 3.2, 7.4);
+  camera.position.copy(defaultCameraPosition);
+
+  const controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.06;
+  controls.target.set(0, 1.4, 0);
+  controls.minDistance = 3;
+  controls.maxDistance = 16;
+
+  addLights(scene);
+  addGround(scene);
+  const model = createToySoldier();
+  scene.add(model.root);
+
+  const animationState = {
+    mode: 'march',
+    isPlaying: true,
+    elapsed: 0
+  };
+
+  const playPauseBtn = document.getElementById('playPauseBtn');
+  const animationSelect = document.getElementById('animationSelect');
+  const resetCameraBtn = document.getElementById('resetCameraBtn');
+  const autoRotateToggle = document.getElementById('autoRotateToggle');
+  const colorSelect = document.getElementById('colorSelect');
+
+  playPauseBtn.addEventListener('click', () => {
+    animationState.isPlaying = !animationState.isPlaying;
+    playPauseBtn.textContent = animationState.isPlaying ? 'Pause Animation' : 'Play Animation';
+    playPauseBtn.setAttribute('aria-pressed', String(!animationState.isPlaying));
+  });
+
+  animationSelect.addEventListener('change', (event) => {
+    animationState.mode = event.target.value;
+    animationState.elapsed = 0;
+  });
+
+  resetCameraBtn.addEventListener('click', () => {
+    camera.position.copy(defaultCameraPosition);
+    controls.target.set(0, 1.4, 0);
+    controls.update();
+  });
+
+  autoRotateToggle.addEventListener('change', (event) => {
+    controls.autoRotate = Boolean(event.target.checked);
+    controls.autoRotateSpeed = 0.9;
+  });
+
+  colorSelect.addEventListener('change', (event) => {
+    applyColorTheme(model.materialTargets, event.target.value);
+  });
+
+  applyColorTheme(model.materialTargets, colorSelect.value);
+
+  const clock = new THREE.Clock();
+  function animate() {
+    requestAnimationFrame(animate);
+
+    const delta = Math.min(clock.getDelta(), 1 / 20);
+    if (animationState.isPlaying) {
+      animationState.elapsed += delta;
+      runAnimation(model.rig, animationState);
+    }
+
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  function resize() {
+    const container = canvas.parentElement;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+    camera.aspect = width / height;
+    camera.updateProjectionMatrix();
+    renderer.setSize(width, height, false);
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+  animate();
+} catch (error) {
+  console.error('Viewer runtime initialization failed:', error);
+  showRuntimeError('Unable to initialize the 3D viewer.', error);
+}
 
 function createRenderer() {
   const rendererOptions = [

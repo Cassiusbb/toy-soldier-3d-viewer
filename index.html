@@ -53,6 +53,29 @@
       </section>
     </main>
 
-    <script type="module" src="./app.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+          "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+      }
+    </script>
+    <script type="module">
+      const canvas = document.getElementById('sceneCanvas');
+      const fallback = document.getElementById('webglFallback');
+
+      function showBootError(error) {
+        canvas.hidden = true;
+        fallback.hidden = false;
+        fallback.textContent =
+          `Unable to load the 3D viewer.\n${error?.message || 'Failed to load module dependencies.'}`;
+      }
+
+      import('./app.js').catch((error) => {
+        console.error('Failed to load viewer module:', error);
+        showBootError(error);
+      });
+    </script>
   </body>
 </html>
