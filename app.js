@@ -4,13 +4,13 @@ import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.170.0/exampl
 const canvas = document.getElementById('sceneCanvas');
 const fallback = document.getElementById('webglFallback');
 
-if (!supportsWebGL()) {
+const renderer = createRenderer();
+if (!renderer) {
   canvas.hidden = true;
   fallback.hidden = false;
   throw new Error('WebGL is not available.');
 }
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -102,15 +102,11 @@ window.addEventListener('resize', resize);
 resize();
 animate();
 
-function supportsWebGL() {
+function createRenderer() {
   try {
-    const testCanvas = document.createElement('canvas');
-    return Boolean(
-      window.WebGLRenderingContext &&
-        (testCanvas.getContext('webgl') || testCanvas.getContext('experimental-webgl'))
-    );
+    return new THREE.WebGLRenderer({ canvas, antialias: true });
   } catch {
-    return false;
+    return null;
   }
 }
 
