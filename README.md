@@ -2,6 +2,14 @@
 
 Standalone low-poly 3D toy soldier viewer built with CDN-loaded Three.js (no build step).
 
+## Public preview URL
+
+After GitHub Pages runs successfully on `main`, the site is available at:
+
+- https://cassiusbb.github.io/toy-soldier-3d-viewer/
+
+If this is the first Pages deploy, enable **Settings → Pages → Build and deployment → Source: GitHub Actions** in this repository.
+
 ## Run locally
 
 Because this project uses JavaScript modules, serve it from any static server in the repository root:
